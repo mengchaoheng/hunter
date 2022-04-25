@@ -1,0 +1,194 @@
+<!-- 组合小车底盘与摄像头与雷达 -->
+<robot name="hunter_b" xmlns:xacro="http://wiki.ros.org/xacro">
+
+    <xacro:include filename="head.xacro" />
+    <xacro:property name="length" value="0.3" />
+    <xacro:property name="width" value="0.3" />
+    <xacro:property name="high" value="0.06" />
+    <xacro:property name="base_mass" value="17.26" />
+    <xacro:property name="PI" value="3.141592653" />
+    <xacro:property name="base_footprint_radius" value="0.001" /> <!-- base_footprint 半径  -->
+    <xacro:property name="wheel_radius" value="0.0625" /><!-- 半径 -->
+    <xacro:property name="wheel_width" value="0.03" /><!-- 宽度 -->
+    <xacro:property name="wheel_m" value="0.2963" />
+
+       <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotSimType>steer_bot_hardware_gazebo/SteerBotHardwareGazebo</robotSimType>
+      <legacyModeNS>false</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+    <!--link name="base_footprint">
+      <visual>
+        <geometry>
+          <sphere radius="${base_footprint_radius}" />
+        </geometry>
+      </visual>
+    </link-->
+
+    <link name="base_link">
+        <xacro:Box_inertial_matrix m="${base_mass}" l="${length}" w="${width}" h="${high}" xyz="0 0 0" rpy="0 0 0"/>
+        <visual>
+            <geometry>
+                <box size="${length} ${width} ${high}" />
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${length} ${width} ${high}" />
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+        </collision>
+    </link>
+    
+    <!--joint name="base_link2base_footprint" type="fixed">
+      <parent link="base_footprint" />
+      <child link="base_link" />
+      <origin xyz="0 0 ${wheel_radius - high / 2 }" />
+    </joint-->
+
+    
+
+    <!-- rear -->
+    <xacro:macro name="add_rear_wheels" params="name flag x y z xyz rpy"> <!--left 1--> <!--right -1-->  
+        <link name="${name}_rear_link">
+            <xacro:cylinder_inertial_matrix m="${wheel_m}" r="${wheel_radius}" h="${wheel_width}" xyz="${xyz}" rpy="${PI/2} 0 0"/>
+            <visual>
+                <origin xyz="${xyz}" rpy="${rpy}" />
+                <geometry>
+                    <mesh filename="package://hunter_gazebo/meshes/front_${name}_wheel_link.STL" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="${xyz}" rpy="${rpy}" />
+                <geometry>
+                    <mesh filename="package://hunter_gazebo/meshes/front_${name}_wheel_link.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <gazebo reference="${name}_rear_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <joint name="${name}_rear_joint" type="continuous">
+            <origin xyz="${-x} ${flag * y} ${z}" rpy="0 0 0" />
+            <parent link="base_link" />
+            <child link="${name}_rear_link" />
+            <axis xyz="0 1 0" />
+            <limit
+                lower="-3.14"
+                upper="3.14"
+                effort="0"
+                velocity="0" />
+        </joint>
+        <gazebo reference="${name}_wheel">
+            <material>Gazebo/Red</material>
+        </gazebo>
+    </xacro:macro>
+    <xacro:add_rear_wheels name="left" flag="1.0" x="${length/2}" y="${width/2+0.06}" z="0" xyz="0 0 0" rpy="0 0 0"/>
+    <xacro:add_rear_wheels name="right" flag="-1.0" x="${length/2}" y="${width/2+0.06}" z="0" xyz="0 0 0" rpy="0 0 0"/>
+
+    <!-- front -->
+    <xacro:property name="support_wheel_radius" value="0.0051" /><!-- 半径 -->
+    <!-- too small will be errors -->
+    <xacro:property name="steer_m" value="0.2963" /> 
+
+    <xacro:macro name="add_front_wheels" params="name flag x y z xyz rpy"> <!--left 1--> <!--right -1-->  
+        <link name="front_steer_${name}_link">
+            <xacro:sphere_inertial_matrix m="${steer_m}" r="${support_wheel_radius}"/>
+            <visual>
+                <origin rpy="0 0 0"  xyz="0 0 0" />
+                <geometry>
+                    <sphere radius="${support_wheel_radius}" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0" />
+                </material>
+            </visual>
+        </link>
+        <joint name="front_steer_${name}_joint" type="revolute">
+            <origin rpy="0 0 0"  xyz="${x} ${flag * y} ${z}" />
+            <parent link="base_link" />
+            <child link="front_steer_${name}_link" />
+            <axis xyz="0 0 1" />     
+            <limit lower="-0.69" upper="0.69" effort="0" velocity="0" />
+        </joint>
+        <link name="front_${name}_wheel_link">
+            <xacro:cylinder_inertial_matrix m="${wheel_m}" r="${wheel_radius}" h="${wheel_width}" xyz="${xyz}" rpy="${PI/2} 0 0"/>
+            <visual>
+                <origin xyz="${xyz}" rpy="${rpy}" />
+                <geometry>
+                    <mesh filename="package://hunter_gazebo/meshes/front_${name}_wheel_link.STL" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="${xyz}" rpy="${rpy}" />
+                <geometry>
+                    <mesh filename="package://hunter_gazebo/meshes/front_${name}_wheel_link.STL" />
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="front_${name}_wheel_joint" type="continuous">
+            <origin xyz="0 0 ${-z}" rpy="0 0 0" />   
+            <parent link="front_steer_${name}_link" />
+            <child  link="front_${name}_wheel_link" />
+            <axis xyz="0 1 0" />
+        </joint>
+        <gazebo reference="front_${name}_wheel_link">
+            <material>Gazebo/Red</material>
+        </gazebo>
+    </xacro:macro>
+    <xacro:add_front_wheels name="left" flag="1.0" x="${length/2}" y="${width/2+0.055}" z="0" xyz="0 0 0" rpy="0 0 0"/>
+    <xacro:add_front_wheels name="right" flag="-1.0" x="${length/2}" y="${width/2+0.055}" z="0" xyz="0 0 0" rpy="0 0 0"/>
+
+    <link name="front_steer_link">
+        <xacro:sphere_inertial_matrix m="${steer_m}" r="${support_wheel_radius}"/>
+        <visual>
+            <origin rpy="0 0 0"  xyz="0 0 0" />
+            <geometry>
+                <sphere radius="${support_wheel_radius}" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <gazebo reference="front_steer_link">
+            <material>Gazebo/Red</material>
+    </gazebo>
+    <joint name="front_steer_joint" type="revolute">
+        <origin xyz="${length/2} 0 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="front_steer_link" />
+        <axis xyz="0 0 1" />     
+        <limit lower="-0.69" upper="0.69" effort="0" velocity="0" />
+    </joint>
+
+    <link name="rear_wheel_link">
+        <xacro:sphere_inertial_matrix m="${steer_m}" r="${support_wheel_radius}"/>
+        <visual>
+            <origin rpy="0 0 0"  xyz="0 0 0" />
+            <geometry>
+                <sphere radius="${support_wheel_radius}" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="rear_wheel_joint" type="continuous">
+        <origin xyz="-${length/2} 0 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="rear_wheel_link" />
+        <axis xyz="0 1 0" />
+    </joint>
+
+</robot>

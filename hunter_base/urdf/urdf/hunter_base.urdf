@@ -1,0 +1,137 @@
+<robot name ="hunter_box">
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="0.8 0.4 0.2" />
+            </geometry>
+        </visual>
+    </link>
+    <!-- right -->
+    <link name="front_steer_right_link">
+        <visual>
+            <geometry>
+                <cylinder  radius="0.005" length="0.001"/>
+            </geometry>
+            <origin rpy="0 0 0"  xyz="0 0 0" />
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="front_steer_right_joint" type="revolute">
+        <origin rpy="0 0 0"  xyz="0.3 -0.33 0.2" />
+        <parent link="base_link" />
+        <child link="front_steer_right_link" />
+        <axis xyz="0 0 1" />     
+        <limit lower="-0.69" upper="0.69" effort="0" velocity="0" />
+    </joint>
+    <link name="front_right_wheel_link">
+        <visual>
+            <origin
+                xyz="0 0 0"
+                rpy="1.57 0 0" />
+            <geometry>
+                <cylinder radius="0.15" length="0.06" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="front_right_wheel_joint" type="continuous">
+        <origin xyz="0 0 -0.2" rpy="0 0 0" />   <!-- amend the position between steer_right_link and front right wheel-->
+        <parent link="front_steer_right_link" />
+        <child  link="front_right_wheel_link" />
+        <axis xyz="0 1 0" />
+    </joint>
+
+
+    <!-- left -->
+    <link name="front_steer_left_link">
+        <visual>
+            <geometry>
+                <cylinder  radius="0.005" length="0.001"/>
+            </geometry>
+            <origin rpy="0 0 0"  xyz="0 0 0" />
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="front_steer_left_joint" type="revolute">
+        <origin rpy="0 0 0"  xyz="0.3 0.33 0.2" />
+        <parent link="base_link" />
+        <child link="front_steer_left_link" />
+        <axis xyz="0 0 1" />     
+        <limit lower="-0.69" upper="0.69" effort="0" velocity="0" />
+    </joint>
+    <link name="front_left_wheel_link">
+        <visual>
+            <origin
+                xyz="0 0 0"
+                rpy="1.57 0 0" />
+            <geometry>
+                <cylinder radius="0.15" length="0.06" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="front_left_wheel_joint" type="continuous">
+        <origin xyz="0 0 -0.2" rpy="0 0 0" />   <!-- amend the position between steer_left_link and front left wheel-->
+        <parent link="front_steer_left_link" />
+        <child  link="front_left_wheel_link" />
+        <axis xyz="0 1 0" />
+    </joint>
+
+
+    <!-- rear right -->
+    <link name="right_rear_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="1.57 0 0" />
+            <geometry>
+                <cylinder radius="0.15" length="0.06" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="right_rear_joint" type="continuous">
+        <origin xyz="-0.3 -0.33 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="right_rear_link" />
+        <axis xyz="0 1 0" />
+        <limit
+            lower="-3.14"
+            upper="3.14"
+            effort="0"
+            velocity="0" />
+    </joint>
+
+    <!-- rear left -->
+    <link name="left_rear_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="1.57 0 0" />
+            <geometry>
+                <cylinder radius="0.15" length="0.06" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 1.0" />
+            </material>
+        </visual>
+    </link>
+    <joint name="left_rear_joint" type="continuous">
+        <origin xyz="-0.3 0.33 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="left_rear_link" />
+        <axis xyz="0 1 0" />
+        <limit
+            lower="-3.14"
+            upper="3.14"
+            effort="0"
+            velocity="0" />
+    </joint>
+
+</robot>

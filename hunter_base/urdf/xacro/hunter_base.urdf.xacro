@@ -1,0 +1,90 @@
+<robot name="hunter" xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:property name="length" value="0.8" />
+    <xacro:property name="width" value="0.4" />
+    <xacro:property name="high" value="0.2" />
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${length} ${width} ${high}" />
+            </geometry>
+        </visual>
+    </link>
+
+    <xacro:property name="wheel_radius" value="0.15" /><!-- 半径 -->
+    <xacro:property name="wheel_width" value="0.06" /><!-- 宽度 -->
+
+    <!-- rear -->
+    <xacro:macro name="add_rear_wheels" params="name flag x y"> <!--left 1--> <!--right -1-->  
+        <link name="${name}_rear_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="1.57 0 0" />
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0" />
+                </material>
+            </visual>
+        </link>
+        <joint name="${name}_rear_joint" type="continuous">
+            <origin xyz="${-x} ${flag * y} 0" rpy="0 0 0" />
+            <parent link="base_link" />
+            <child link="${name}_rear_link" />
+            <axis xyz="0 1 0" />
+            <limit
+                lower="-3.14"
+                upper="3.14"
+                effort="0"
+                velocity="0" />
+        </joint>
+    </xacro:macro>
+    <xacro:add_rear_wheels name="left" flag="1.0" x="0.3" y="0.33"/>
+    <xacro:add_rear_wheels name="right" flag="-1.0" x="0.3" y="0.33"/>
+
+    <xacro:property name="steer_radius" value="0.005" /><!-- 半径 -->
+    <xacro:property name="steer_width" value="0.001" /><!-- 宽度 -->
+    <!-- front -->
+    <xacro:macro name="add_front_wheels" params="name flag x y z"> <!--left 1--> <!--right -1-->  
+        <link name="front_steer_${name}_link">
+            <visual>
+                <geometry>
+                    <cylinder radius="${steer_radius}" length="${steer_width}" />
+                </geometry>
+                <origin rpy="0 0 0"  xyz="0 0 0" />
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0" />
+                </material>
+            </visual>
+        </link>
+        <joint name="front_steer_${name}_joint" type="revolute">
+            <origin rpy="0 0 0"  xyz="${x} ${flag * y} ${z}" />
+            <parent link="base_link" />
+            <child link="front_steer_${name}_link" />
+            <axis xyz="0 0 1" />     
+            <limit lower="-0.69" upper="0.69" effort="0" velocity="0" />
+        </joint>
+        <link name="front_${name}_wheel_link">
+            <visual>
+                <origin
+                    xyz="0 0 0"
+                    rpy="1.57 0 0" />
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 1.0" />
+                </material>
+            </visual>
+        </link>
+        <joint name="front_${name}_wheel_joint" type="continuous">
+            <origin xyz="0 0 ${-z}" rpy="0 0 0" />   <!-- amend the position between steer_${name}_link and front ${name} wheel-->
+            <parent link="front_steer_${name}_link" />
+            <child  link="front_${name}_wheel_link" />
+            <axis xyz="0 1 0" />
+        </joint>
+    </xacro:macro>
+    <xacro:add_front_wheels name="left" flag="1.0" x="0.3" y="0.33" z="0.16"/>
+    <xacro:add_front_wheels name="right" flag="-1.0" x="0.3" y="0.33" z="0.16"/>
+
+</robot>
