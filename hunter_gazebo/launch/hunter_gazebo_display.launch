@@ -1,0 +1,30 @@
+<launch>
+
+    <!-- 将 Urdf 文件的内容加载到参数服务器 -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find hunter_gazebo)/urdf/hunter.urdf.xacro" />
+
+    <!-- 启动 gazebo -->
+    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+        <arg name="world_name" value="$(find hunter_gazebo)/worlds/my.world" />
+    </include> -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch" />
+
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="0.1" />
+    <arg name="roll" default="0.0"/>
+    <arg name="pitch" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+
+    <!-- control  -->
+    <!-- <include file="$(find hunter_gazebo)/launch/hunter_gazebo_base.launch" /> -->
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <param name="publish_frequency" value="50.0"/>
+    </node> -->
+ 
+
+    <node name="spawn_vehicle" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model hunter -gazebo_namespace /gazebo 
+              -x $(arg x) -y $(arg y) -z $(arg z)
+              -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
+          respawn="false" output="screen" />
+</launch>

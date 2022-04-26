@@ -12,12 +12,7 @@
     <xacro:property name="wheel_width" value="0.03" /><!-- 宽度 -->
     <xacro:property name="wheel_m" value="0.2963" />
 
-    <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotSimType>steer_bot_hardware_gazebo/SteerBotHardwareGazebo</robotSimType>
-        <legacyModeNS>false</legacyModeNS>
-        </plugin>
-    </gazebo>
+
 
     <link name="base_link">
         <xacro:Box_inertial_matrix m="${base_mass}" l="${length}" w="${width}" h="${high}" xyz="0 0 0" rpy="0 0 0"/>
