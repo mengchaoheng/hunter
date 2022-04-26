@@ -4,10 +4,10 @@
     <param name="robot_description" command="$(find xacro)/xacro $(find hunter_gazebo)/urdf/hunter.urdf.xacro" />
 
     <!-- 启动 gazebo -->
-    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-        <arg name="world_name" value="$(find hunter_gazebo)/worlds/my.world" />
-    </include> -->
-    <include file="$(find gazebo_ros)/launch/empty_world.launch" />
+    <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+        <arg name="world_name" value="$(find hunter_gazebo)/worlds/iscas_museum.world" />
+    </include>
+    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch" /> -->
 
     <arg name="x" default="0.0"/>
     <arg name="y" default="0.0"/>

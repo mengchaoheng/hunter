@@ -1,14 +1,14 @@
 <launch>
 
     <!-- 将 Urdf 文件的内容加载到参数服务器 -->
-    <param name="robot_description" command="$(find xacro)/xacro $(find hunter_gazebo)/urdf/hunter_cmd.urdf.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro $(find hunter_gazebo)/urdf/hunter_sensors_cmd.urdf.xacro" />
 
     <!-- 启动 gazebo -->
     <!-- joint state publish by gazebo -->
-    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch" >
-        <arg name="world_name" value="$(find hunter_gazebo)/worlds/my.world" />
-    </include> -->
-    <include file="$(find gazebo_ros)/launch/empty_world.launch" />
+    <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+        <arg name="world_name" value="$(find hunter_gazebo)/worlds/iscas_museum.world" />
+    </include>
+    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch" /> -->
 
     <arg name="x" default="0.0"/>
     <arg name="y" default="0.0"/>
@@ -43,7 +43,7 @@
 
     <!-- 启动 rviz -->
     <!-- for rviz, have to pub joint state and robot state -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find hunter_gazebo)/config/rviz.rviz"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find hunter_gazebo)/config/laser.rviz"/>
 
     <!-- 机器人状态发布节点 -->
     
